@@ -1,5 +1,7 @@
 import iziToast from 'izitoast';
 import 'izitoast/dist/css/iziToast.min.css';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
 import { fetchPhotos } from './js/pixabay-api';
 import { renderPhotos } from './js/render-functions';
 
@@ -46,6 +48,8 @@ const options = {
   captionDelay: 250,
 };
 
+const lightbox = new SimpleLightbox('.gallery a');
+
 fetchPicturesForm.addEventListener('submit', async e => {
   showLoader();
   page = 1;
@@ -56,6 +60,9 @@ fetchPicturesForm.addEventListener('submit', async e => {
   try {
     const photos = await fetchPhotos(userQuery, page, per_page);
     renderPhotos(photos, gallery, options);
+
+    lightbox.refresh();
+
     fetchPicturesForm.reset();
     hideLoader();
     showLoadMoreButton();
@@ -78,6 +85,7 @@ fetchPicturesForm.addEventListener('submit', async e => {
         });
       }
     }
+
     if (shouldHideLoadMoreButton(gallery.children.length, photos.totalHits)) {
       hideLoadMoreButton();
     } else {
@@ -95,6 +103,9 @@ loadMoreBtn.addEventListener('click', async () => {
     page += 1;
     const photos = await fetchPhotos(userQuery, page, per_page);
     renderPhotos(photos, gallery);
+
+    lightbox.refresh();
+
     hideLoader();
 
     const galleryElement = document.querySelector('.gallery');
